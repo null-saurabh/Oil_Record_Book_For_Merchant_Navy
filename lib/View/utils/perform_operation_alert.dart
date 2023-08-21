@@ -17,7 +17,23 @@ class _PerformOperationsState extends State<PerformOperations> {
   // final TextEditingController tankCapacityController = TextEditingController();
   // final TextEditingController tankRobController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late String arithmeticExpression;
 
+  @override
+  void initState() {
+    super.initState();
+    if(widget.operationName == "Manual Addition" || widget.operationName == "Daily Collection/Generation" || widget.operationName == "From Engine Room Bilge Well")
+      {
+        arithmeticExpression = "add";
+      }
+    else if(widget.operationName == "Evaporation" || widget.operationName == "Shore Disposal" || widget.operationName == "Incinerated" || widget.operationName == "Ows Overboard")
+      {
+        arithmeticExpression = "sub";
+      }
+    else{
+      arithmeticExpression = "transfer";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,16 +77,20 @@ class _PerformOperationsState extends State<PerformOperations> {
             ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
+                  if(arithmeticExpression == "add"){
+                    Provider.of<TankProvider>(context, listen: false).addToROB(widget.tank.tankName, double.tryParse(valueController.text) ?? 0);
+                  }
+                  else if(arithmeticExpression == "sub"){
+                    Provider.of<TankProvider>(context, listen: false).subtractFromROB(widget.tank.tankName, double.tryParse(valueController.text) ?? 0);
+                  }
+                  else
+                    {
+                      Provider.of<TankProvider>(context, listen: false).transferROB(widget.tank.tankName,widget.operationName.replaceFirst("To ",""),double.tryParse(valueController.text) ?? 0);
+                    }
 
-                  // if (widget.editThisTank != null) {
-                  //   Provider.of<TankProvider>(context, listen: false)
-                  //       .editTank(widget.editThisTank!.tankName, tank);
-                  // }
-                  // else{}
-                    Provider.of<TankProvider>(context, listen: false)
-                        .addToROB(widget.tank.tankName, double.tryParse(valueController.text) ?? 0);
-                    Provider.of<TankProvider>(context, listen: false)
-                        .saveOperations(widget.tank.tankName,widget.operationName,double.tryParse(valueController.text) ?? 0);
+                  if(widget.operationName != "Daily Collection/Generation")
+                    {Provider.of<TankProvider>(context, listen: false)
+                        .saveOperations(widget.tank.tankName,widget.operationName,double.tryParse(valueController.text) ?? 0);}
 
                   Navigator.pop(context);
                 }

@@ -31,7 +31,9 @@ class TankProvider extends ChangeNotifier {
   }
 
   void addToROB(String tankName, double amount) {
-    Tank targetTank = _tanks.firstWhere((tank) => tank.tankName == tankName);
+    Tank targetTank = _tanks.firstWhere((tank) => tank.tankName == tankName,
+        orElse: () => throw Exception('Tank not found')
+    );
       targetTank.addROB(amount);
       notifyListeners();
 
@@ -39,10 +41,10 @@ class TankProvider extends ChangeNotifier {
 
   void subtractFromROB(String tankName, double amount) {
     Tank targetTank = _tanks.firstWhere((tank) => tank.tankName == tankName);
-    if (targetTank != null) {
+    // if (targetTank != null) {
       targetTank.subtractROB(amount);
       notifyListeners();
-    }
+    // }
   }
 
   void transferROB(String sourceTankName, String targetTankName,
@@ -51,10 +53,8 @@ class TankProvider extends ChangeNotifier {
     tank.tankName == sourceTankName);
     Tank destTank = _tanks.firstWhere((tank) =>
     tank.tankName == targetTankName);
-    if (sourceTank != null && destTank != null) {
-      sourceTank.transferROBTo(destTank, amount);
-      notifyListeners();
-    }
+    sourceTank.transferROBTo(destTank, amount);
+    notifyListeners();
   }
 
   void saveOperations(String fromTankName, String operationName, double value) {

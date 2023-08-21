@@ -67,7 +67,7 @@ class _OperationSelectionDialogState extends State<OperationSelectionDialog> {
           },
           style: ButtonStyle(
           minimumSize:
-          MaterialStateProperty.all(Size(double.infinity , 40))),
+          MaterialStateProperty.all(const Size(double.infinity , 40))),
           child: const Text('Confirm'),
         ),
       ],
