@@ -60,7 +60,7 @@ class _HomePageTankUiState extends State<HomePageTankUi> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey)
+        border: Border.all(color: Colors.green)
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: 10.0,bottom: 12,right: 5,left: 5),

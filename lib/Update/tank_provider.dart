@@ -59,7 +59,6 @@ class TankProvider extends ChangeNotifier {
 
   void saveOperations(String fromTankName, String operationName, double value) {
     Tank fromTank = _tanks.firstWhere((tank) => tank.tankName == fromTankName);
-    // Tank? toTank = _tanks.firstWhere((tank) => tank.tankName == toTankName, orElse: () => null);
       fromTank.addPerformedOperation("$operationName: $value");
       notifyListeners();
   }
