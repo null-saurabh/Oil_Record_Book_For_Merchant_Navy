@@ -87,8 +87,8 @@ class _HomePageTankUiState extends State<HomePageTankUi> {
                           height: 200,
                           child: Padding(
                             padding: const EdgeInsets.only(top: 5.0,bottom: 5),
-                            child: ListView.builder(itemCount:widget.tank.allOperationsPerformed.length,itemBuilder: (context,index){
-                              return Text((index+1).toString() +". "+widget.tank.allOperationsPerformed[index]);
+                            child: ListView.builder(itemCount:widget.tank.performedOperations?.length,itemBuilder: (context,index){
+                              return Text("${index+1}. ${widget.tank.performedOperations![index].operationName}: ${widget.tank.performedOperations![index].amount}");
                             }),
                           ),
                         ),

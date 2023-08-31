@@ -1,17 +1,54 @@
 import 'package:finalorb/Model/tank_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class TankProvider extends ChangeNotifier {
-  final List<Tank> _tanks = [];
+
+  List<Tank> _tanks = [];
   List<Tank> get tanks => _tanks;
+
+  List<Operations> _operations = [];
+  List<Operations> get operations => _operations;
+
+  TankProvider() {
+    _loadTanks();
+  }
+
+  Future<void> _loadTanks() async {
+    if (!Hive.isBoxOpen('tanks')) {
+      final box = await Hive.openBox<Tank>('tanks');
+      _tanks = box.values.toList();
+    } else {
+      final box = Hive.box<Tank>('tanks');
+      _tanks = box.values.toList();
+    }
+  }
+
+  Future<void> saveTanksToHive() async {
+    if (!Hive.isBoxOpen('tanks')) {
+      final box = await Hive.openBox<Tank>('tanks');
+      await box.clear();
+      for (final tank in _tanks) {
+        await box.add(tank);
+      }
+    } else {
+      final box = Hive.box<Tank>('tanks');
+      await box.clear();
+      for (final tank in _tanks) {
+        await box.add(tank);
+      }
+    }
+  }
 
   void addTank(Tank tank) {
     _tanks.add(tank);
+    saveTanksToHive();
     notifyListeners();
   }
 
   void deleteTank(String tankName) {
     _tanks.removeWhere((tank) => tank.tankName == tankName);
+    saveTanksToHive();
     notifyListeners();
   }
 
@@ -19,6 +56,7 @@ class TankProvider extends ChangeNotifier {
     int index = _tanks.indexWhere((tank) => tank.tankName == oldTankName);
     if (index != -1) {
       _tanks[index] = newTankData;
+      saveTanksToHive();
       notifyListeners();
     }
   }

@@ -1,4 +1,5 @@
 
+import 'package:finalorb/Model/tank_model.dart';
 import 'package:finalorb/Update/tank_provider.dart';
 import 'package:finalorb/View/screen/add_tank.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,12 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
-  // Hive.registerAdapter(TaskAdapter());
-  // await Hive.openBox<Task>('tasks');
+  Hive.registerAdapter(TankAdapter());
+  await Hive.openBox<Tank>('tanks');
+
+
+  Hive.registerAdapter((OperationsAdapter()));
+  await Hive.openBox<Operations>('operations');
 
   runApp(const MyApp());
 }
