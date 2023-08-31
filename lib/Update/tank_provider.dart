@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 
 class TankProvider extends ChangeNotifier {
   final List<Tank> _tanks = [];
-
   List<Tank> get tanks => _tanks;
 
   void addTank(Tank tank) {
@@ -24,55 +23,34 @@ class TankProvider extends ChangeNotifier {
     }
   }
 
-  void updateTankOperations(String tankName, List<String> newOperations) {
-    Tank targetTank = _tanks.firstWhere((tank) => tank.tankName == tankName);
-    targetTank.updateTankOperations(newOperations);
-    notifyListeners();
-  }
-
   void addToROB(String tankName, double amount) {
     Tank targetTank = _tanks.firstWhere((tank) => tank.tankName == tankName,
         orElse: () => throw Exception('Tank not found')
     );
-      targetTank.addROB(amount);
+    if(targetTank.currentROB + amount <= targetTank.totalCapacity){
+    targetTank.currentROB += amount;
+    }
       notifyListeners();
-
   }
 
   void subtractFromROB(String tankName, double amount) {
-    Tank targetTank = _tanks.firstWhere((tank) => tank.tankName == tankName);
-    // if (targetTank != null) {
-      targetTank.subtractROB(amount);
+    Tank targetTank = _tanks.firstWhere((tank) => tank.tankName == tankName,orElse: () => throw Exception('Tank not found'));
+    if (targetTank.currentROB - amount >= 0) {
+      targetTank.currentROB -= amount;
       notifyListeners();
-    // }
+    }
   }
 
-  void transferROB(String sourceTankName, String targetTankName,
-      double amount) {
+  void transferROB(String sourceTankName, String targetTankName, double amount) {
     Tank sourceTank = _tanks.firstWhere((tank) =>
-    tank.tankName == sourceTankName);
-    Tank destTank = _tanks.firstWhere((tank) =>
-    tank.tankName == targetTankName);
-    sourceTank.transferROBTo(destTank, amount);
+    tank.tankName == sourceTankName,orElse: () => throw Exception('Tank not found'));
+    Tank destinationTank = _tanks.firstWhere((tank) =>
+    tank.tankName == targetTankName,orElse: () => throw Exception('Tank not found'));
+
+    if(sourceTank.currentROB - amount >= 0 && destinationTank.currentROB + amount <= destinationTank.totalCapacity){
+      addToROB(destinationTank.tankName, amount);
+      subtractFromROB(sourceTank.tankName, amount);
+    }
     notifyListeners();
   }
-
-  void saveOperations(String fromTankName, String operationName, double value) {
-    Tank fromTank = _tanks.firstWhere((tank) => tank.tankName == fromTankName);
-      fromTank.addPerformedOperation("$operationName: $value");
-      notifyListeners();
-  }
 }
-
-  // void performTransfer(String fromTankName, String toTankName) {
-  //   Tank? fromTank = _tanks.firstWhere((tank) => tank.tankName == fromTankName, orElse: () => null);
-  //   Tank? toTank = _tanks.firstWhere((tank) => tank.tankName == toTankName, orElse: () => null);
-  //
-  //   if (fromTank != null && toTank != null) {
-  //     fromTank.addOperation('transfer to $toTankName');
-  //     toTank.addOperation('received from $fromTankName');
-  //     notifyListeners();
-  //   }
-  // }
-// More utility functions for managing the tanks can be added as required.
-
